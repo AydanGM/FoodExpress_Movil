@@ -17,6 +17,7 @@ fun NavegacionPrincipal() {
     Scaffold(
         topBar = {
             TopAppBarPersonalizada(
+                navController = navController,
                 searchText = searchText,
                 onSearchTextChange = { searchText = it },
                 onSearchSubmit = {
@@ -51,6 +52,12 @@ fun NavegacionPrincipal() {
             }
             composable(DestinosNavegacion.Perfil.ruta) {
                 PantallaPerfil()
+            }
+            composable(DestinosNavegacion.Login.ruta) {
+                PantallaLogin(navController)
+            }
+            composable(DestinosNavegacion.Registro.ruta){
+                PantallaRegistro(navController)
             }
         }
     }

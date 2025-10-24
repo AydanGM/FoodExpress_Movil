@@ -16,10 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarPersonalizada(
+    navController: NavController,
     searchText: String,
     onSearchTextChange: (String) -> Unit,
     onSearchSubmit: () -> Unit,
@@ -114,14 +116,14 @@ fun TopAppBarPersonalizada(
                         text = { Text("Iniciar sesión") },
                         onClick = {
                             expanded = false
-                            onProfileClick()
+                            navController.navigate(DestinosNavegacion.Login.ruta)
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("Registro") },
                         onClick = {
                             expanded = false
-                            onProfileClick()
+                            navController.navigate(DestinosNavegacion.Registro.ruta)
                         }
                     )
                 }
