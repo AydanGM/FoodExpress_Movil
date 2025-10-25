@@ -7,7 +7,7 @@ object Validaciones {
     // Expresiones regulares
     private val nombreRegex = Regex("^[a-zA-ZÀ-ÿ\\s]{10,40}$")
     private val correoRegex = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$", RegexOption.IGNORE_CASE)
-    private val passwordRegex = Regex("""^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+<>.?{}\[\]~-]).{8,}$""")
+    private val passwordRegex = Regex("^(?=.*[A-Z])(?=.*\\d).{8,}$")
 
     fun validarNombre(nombre: String): String? {
         return if (!nombreRegex.matches(nombre.trim())) {
@@ -23,7 +23,7 @@ object Validaciones {
 
     fun validarPassword(password: String): String? {
         return if (!passwordRegex.matches(password)) {
-            "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo."
+            "La contraseña debe tener al menos 8 caracteres, una mayúscula y un número."
         } else null
     }
 

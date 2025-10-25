@@ -1,104 +1,104 @@
 package com.example.foodexpress.view
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodexpress.R
 
 data class Promocion(
     val titulo: String,
     val descripcion: String,
-    val textoBoton: String
+    @DrawableRes val imagen: Int
 )
 
 @Composable
 fun SeccionPromociones() {
     val promociones = listOf(
         Promocion(
-            "Todas las comidas vegetarianas 20% OFF",
-            "Solo por hoy",
-            "Ordenar ahora"
+            "¡2x1 en Pizzas!",
+            "Lleva dos y paga una. No te lo pierdas.",
+            R.drawable.promo_pizzas
         ),
         Promocion(
-            "Hamburguesa big-mamma 2x1",
-            "Solo por hoy",
-            "Ordenar ahora"
-        ),
-        Promocion(
-            "Envio gratis en Pizzas La Cordillera",
-            "Pedido mínimo $10.000",
-            "Ordenar ahora"
+            "20% OFF en comida vegetariana",
+            "Toda la carta vegetariana con descuento.",
+            R.drawable.promo_vegetariana
         )
     )
 
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "🔥 Promociones Destacadas",
-            fontSize = 20.sp,
+            text = "🔥 Promociones para ti",
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             promociones.forEach { promo ->
-                TarjetaPromocion(promo)
+                TarjetaPromocion(promocion = promo, modifier = Modifier.weight(1f))
             }
         }
     }
 }
 
 @Composable
-fun TarjetaPromocion(promocion: Promocion) {
+fun TarjetaPromocion(promocion: Promocion, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
+        modifier = modifier.height(220.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Placeholder para imagen
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = promocion.imagen),
+                contentDescription = promocion.titulo,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
             Box(
                 modifier = Modifier
-                    .height(80.dp)
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text("🎯 Imagen Promo", modifier = Modifier.align(Alignment.Center))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = promocion.titulo,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = promocion.descripcion,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = { /* TODO: Manejar orden */ }) {
-                Text(promocion.textoBoton)
+                Text(
+                    text = promocion.titulo,
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = promocion.descripcion,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { /* TODO: Navegar a la promoción */ }) {
+                    Text("Ver más")
+                }
             }
         }
     }

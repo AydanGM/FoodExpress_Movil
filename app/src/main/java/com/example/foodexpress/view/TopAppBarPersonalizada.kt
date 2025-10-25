@@ -1,7 +1,10 @@
 package com.example.foodexpress.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -14,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.foodexpress.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,41 +31,18 @@ fun TopAppBarPersonalizada(
     onSearchTextChange: (String) -> Unit,
     onSearchSubmit: () -> Unit,
     onProfileClick: () -> Unit,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    onTitleClick: () -> Unit, // Nuevo parámetro
+    numeroDeItems: Int,
+    usuarioConectado: Boolean
 ) {
     val focusManager = LocalFocusManager.current
 
-    CenterAlignedTopAppBar(
-        title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Logo placeholder (luego agregarás imagen real)
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("🍕", style = MaterialTheme.typography.titleMedium)
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    "Food Express",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White
-                )
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color(0xFFDC2626) // Rojo similar a tu React
         ),
-        actions = {
-            // Barra de búsqueda
+        title = {
             OutlinedTextField(
                 value = searchText,
                 onValueChange = onSearchTextChange,
@@ -78,27 +60,63 @@ fun TopAppBarPersonalizada(
                     unfocusedTextColor = Color.White,
                     cursorColor = Color.White,
                     focusedBorderColor = Color.White.copy(alpha = 0.5f),
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.3f)
+                    unfocusedBorderColor = Color.Transparent
                 ),
                 modifier = Modifier
-                    .width(200.dp)
-                    .height(40.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(end = 8.dp)
             )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
+        },
+        navigationIcon = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .clickable { onTitleClick() } // Se hace clicleable
+            ) {
+                // Logo con fondo blanco circular
+                Box(
+                    modifier = Modifier
+                        .size(40.dp) // Un poco más grande para el fondo
+                        .clip(CircleShape)
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Logo Food Express",
+                        modifier = Modifier.size(36.dp) // El logo en sí
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Food Express",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+            }
+        },
+        actions = {
             // Icono del carrito
             IconButton(onClick = onCartClick) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCart,
-                    contentDescription = "Carrito",
-                    tint = Color.White
-                )
+                BadgedBox(
+                    badge = {
+                        if (numeroDeItems > 0) {
+                            Badge { Text(text = numeroDeItems.toString()) }
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "Carrito",
+                        tint = Color.White
+                    )
+                }
             }
 
             // Menú de usuario
             var expanded by remember { mutableStateOf(false) }
-
             Box {
                 IconButton(onClick = { expanded = true }) {
                     Icon(
@@ -112,20 +130,30 @@ fun TopAppBarPersonalizada(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Iniciar sesión") },
-                        onClick = {
-                            expanded = false
-                            navController.navigate(DestinosNavegacion.Login.ruta)
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Registro") },
-                        onClick = {
-                            expanded = false
-                            navController.navigate(DestinosNavegacion.Registro.ruta)
-                        }
-                    )
+                    if (usuarioConectado) {
+                        DropdownMenuItem(
+                            text = { Text("Perfil") },
+                            onClick = {
+                                expanded = false
+                                onProfileClick()
+                            }
+                        )
+                    } else {
+                        DropdownMenuItem(
+                            text = { Text("Iniciar sesión") },
+                            onClick = {
+                                expanded = false
+                                navController.navigate(DestinosNavegacion.Login.ruta)
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Registro") },
+                            onClick = {
+                                expanded = false
+                                navController.navigate(DestinosNavegacion.Registro.ruta)
+                            }
+                        )
+                    }
                 }
             }
         }

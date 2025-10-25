@@ -13,14 +13,16 @@ import androidx.navigation.NavController
 import com.example.foodexpress.view.componentes.AlertaMensaje
 import com.example.foodexpress.view.componentes.CampoTextoValidado
 import com.example.foodexpress.viewModel.AuthViewModel
+import com.example.foodexpress.viewModel.UsuarioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaRegistro(
     navController: NavController,
-    viewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    usuarioViewModel: UsuarioViewModel
 ) {
-    val authState by viewModel.authState.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -45,7 +47,7 @@ fun PantallaRegistro(
             ) {
                 CampoTextoValidado(
                     valor = authState.usuario.nombre,
-                    onValorChange = viewModel::onNombreChange,
+                    onValorChange = authViewModel::onNombreChange,
                     label = "Nombre completo",
                     esError = authState.errores.nombre != null,
                     mensajeError = authState.errores.nombre
@@ -53,7 +55,7 @@ fun PantallaRegistro(
 
                 CampoTextoValidado(
                     valor = authState.usuario.correo,
-                    onValorChange = viewModel::onCorreoChange,
+                    onValorChange = authViewModel::onCorreoChange,
                     label = "Correo electrónico",
                     esError = authState.errores.correo != null,
                     mensajeError = authState.errores.correo,
@@ -62,7 +64,7 @@ fun PantallaRegistro(
 
                 CampoTextoValidado(
                     valor = authState.usuario.password,
-                    onValorChange = viewModel::onPasswordChange,
+                    onValorChange = authViewModel::onPasswordChange,
                     label = "Contraseña",
                     esError = authState.errores.password != null,
                     mensajeError = authState.errores.password,
@@ -71,7 +73,7 @@ fun PantallaRegistro(
 
                 CampoTextoValidado(
                     valor = authState.confirmPassword,
-                    onValorChange = viewModel :: onConfirmPasswordChange,
+                    onValorChange = authViewModel :: onConfirmPasswordChange,
                     label = "Confirmar contraseña",
                     esError = authState.errores.confirmPassword != null,
                     mensajeError = authState.errores.confirmPassword,
@@ -81,7 +83,7 @@ fun PantallaRegistro(
                 Button(
                     onClick = {
                         // Necesitaríamos pasar confirmPassword al ViewModel
-                        viewModel.registrar()
+                        authViewModel.registrar()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !authState.isLoading
@@ -105,8 +107,11 @@ fun PantallaRegistro(
     // Navegación automática después de registro exitoso
     LaunchedEffect(authState.mensaje) {
         if (authState.mensaje.contains("éxito")) {
-            viewModel.limpiarMensaje()
-            navController.navigate("login") {
+            // Iniciar sesión automáticamente al registrarse
+            usuarioViewModel.iniciarSesion(authState.usuario.nombre, authState.usuario.correo)
+
+            authViewModel.limpiarMensaje()
+            navController.navigate("inicio") {
                 popUpTo("registro") { inclusive = true }
             }
         }
@@ -117,7 +122,7 @@ fun PantallaRegistro(
         AlertaMensaje(
             mensaje = authState.mensaje,
             onConfirm = {
-                viewModel.limpiarMensaje()
+                authViewModel.limpiarMensaje()
             }
         )
     }

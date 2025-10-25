@@ -7,6 +7,7 @@ sealed class DestinosNavegacion(val ruta: String, val titulo: String) {
     object Perfil : DestinosNavegacion("perfil", "Perfil")
     object Login : DestinosNavegacion("login", "Login")
     object Registro : DestinosNavegacion("registro", "Registro")
+    object Carrito : DestinosNavegacion("carrito", "Carrito")
 
     // Para búsqueda con parámetros
     fun withSearch(query: String): String {
