@@ -1,27 +1,30 @@
 package com.example.foodexpress.view
 
+import PantallaMapaOffline
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.foodexpress.viewModel.AuthViewModel
 import com.example.foodexpress.viewModel.CarritoViewModel
 import com.example.foodexpress.viewModel.UsuarioViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun NavegacionPrincipal() {
+fun NavegacionPrincipal(
+    authViewModel: AuthViewModel,
+    usuarioViewModel: UsuarioViewModel
+) {
     val navController = rememberNavController()
     var searchText by remember { mutableStateOf("") }
     val carritoViewModel: CarritoViewModel = viewModel()
-    val usuarioViewModel: UsuarioViewModel = viewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val carritoState by carritoViewModel.uiState.collectAsState()
@@ -43,7 +46,6 @@ fun NavegacionPrincipal() {
                 searchText = searchText,
                 onSearchTextChange = { searchText = it },
                 onSearchSubmit = {
-                    // Navegar a menú con término de búsqueda
                     navController.navigate("menu?search=$searchText")
                 },
                 onProfileClick = {
@@ -52,13 +54,12 @@ fun NavegacionPrincipal() {
                 onCartClick = {
                     navController.navigate(DestinosNavegacion.Carrito.ruta)
                 },
-                onTitleClick = { // Acción al hacer clic en el título
+                onTitleClick = {
                     navController.navigate(DestinosNavegacion.Inicio.ruta) {
-                        // Limpia la pila de navegación para evitar acumular pantallas de inicio
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
-                        launchSingleTop = true // Evita relanzar si ya está en la cima
+                        launchSingleTop = true
                     }
                 },
                 numeroDeItems = carritoState.numeroDeItems,
@@ -102,30 +103,30 @@ fun NavegacionPrincipal() {
             composable(DestinosNavegacion.Perfil.ruta) {
                 PantallaPerfil(
                     navController = navController,
-                    usuarioViewModel = usuarioViewModel
+                    usuarioViewModel = usuarioViewModel,
+                    authViewModel = authViewModel
                 )
             }
             composable(DestinosNavegacion.Login.ruta) {
                 PantallaLogin(
                     navController = navController,
+                    authViewModel = authViewModel,
                     usuarioViewModel = usuarioViewModel
                 )
             }
-            composable(DestinosNavegacion.Registro.ruta){
+            composable(DestinosNavegacion.Registro.ruta) {
                 PantallaRegistro(
                     navController = navController,
+                    authViewModel = authViewModel,
                     usuarioViewModel = usuarioViewModel
                 )
             }
-            composable(DestinosNavegacion.Carrito.ruta){
+            composable(DestinosNavegacion.Carrito.ruta) {
                 PantallaCarrito(carritoViewModel = carritoViewModel)
+            }
+            composable(DestinosNavegacion.Mapa.ruta) {
+                PantallaMapaOffline()
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewNavegacionPrincipal() {
-    NavegacionPrincipal()
 }

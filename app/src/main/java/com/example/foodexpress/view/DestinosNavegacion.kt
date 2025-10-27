@@ -9,6 +9,8 @@ sealed class DestinosNavegacion(val ruta: String, val titulo: String) {
     object Registro : DestinosNavegacion("registro", "Registro")
     object Carrito : DestinosNavegacion("carrito", "Carrito")
 
+    object Mapa : DestinosNavegacion("mapa", "Mapa")
+
     // Para búsqueda con parámetros
     fun withSearch(query: String): String {
         return "$ruta?search=$query"

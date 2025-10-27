@@ -15,6 +15,7 @@ fun BottomNavigationBar(navController: NavController) {
         DestinosNavegacion.Inicio,
         DestinosNavegacion.Menu,
         DestinosNavegacion.Restaurantes,
+        DestinosNavegacion.Mapa,
         DestinosNavegacion.Perfil
     )
 
@@ -31,6 +32,7 @@ fun BottomNavigationBar(navController: NavController) {
                             is DestinosNavegacion.Menu -> "🍕"
                             is DestinosNavegacion.Restaurantes -> "🏪"
                             is DestinosNavegacion.Perfil -> "👤"
+                            is DestinosNavegacion.Mapa -> "🗺️"
                             else -> "❓"
                         }
                     )

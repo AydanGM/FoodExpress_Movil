@@ -12,7 +12,8 @@ data class Usuario(
 )
 
 data class UsuarioUiState(
-    val usuarioActual: Usuario? = null
+    val usuarioActual: Usuario? = null,
+    val isAuthenticated: Boolean = false
 )
 
 class UsuarioViewModel : ViewModel() {
@@ -21,10 +22,21 @@ class UsuarioViewModel : ViewModel() {
     val uiState: StateFlow<UsuarioUiState> = _uiState.asStateFlow()
 
     fun iniciarSesion(nombre: String, email: String) {
-        _uiState.update { it.copy(usuarioActual = Usuario(nombre, email)) }
+        _uiState.update {
+            it.copy(
+                usuarioActual = Usuario(nombre, email),
+                isAuthenticated = true
+            )
+        }
     }
 
+
     fun cerrarSesion() {
-        _uiState.update { it.copy(usuarioActual = null) }
+        _uiState.update {
+            it.copy(
+                usuarioActual = null,
+                isAuthenticated = false
+            )
+        }
     }
 }

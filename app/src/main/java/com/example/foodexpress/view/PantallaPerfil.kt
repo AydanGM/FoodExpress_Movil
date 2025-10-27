@@ -27,18 +27,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodexpress.R
+import com.example.foodexpress.viewModel.AuthViewModel
 import com.example.foodexpress.viewModel.Usuario
 import com.example.foodexpress.viewModel.UsuarioViewModel
 
 @Composable
-fun PantallaPerfil(usuarioViewModel: UsuarioViewModel, navController: NavController) {
+fun PantallaPerfil(
+        usuarioViewModel: UsuarioViewModel,
+        navController: NavController,
+        authViewModel: AuthViewModel
+) {
     val usuarioState by usuarioViewModel.uiState.collectAsState()
     val usuarioActual = usuarioState.usuarioActual
 
     if (usuarioActual != null) {
         PantallaPerfilConectado(
             usuario = usuarioActual,
-            onCerrarSesion = { usuarioViewModel.cerrarSesion() }
+            onCerrarSesion = {
+                usuarioViewModel.cerrarSesion()
+                authViewModel.logout()
+                navController.navigate("login") {
+                    popUpTo(0)
+                }
+            }
         )
     } else {
         PantallaPerfilDesconectado(navController = navController)
@@ -135,10 +146,4 @@ fun TarjetaOpcionPerfil(icono: ImageVector, texto: String, esDestructivo: Boolea
 @Composable
 fun PreviewPantallaPerfilConectado() {
     PantallaPerfilConectado(usuario = Usuario("Mark Zuckerberg", "mark.z@example.com"), onCerrarSesion = {})
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewPantallaPerfilDesconectado() {
-    // PantallaPerfilDesconectado(navController = rememberNavController())
 }

@@ -1,5 +1,6 @@
 package com.example.foodexpress.view.componentes
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -37,8 +38,12 @@ fun CampoTextoValidado(
         label = { Text(label) },
         isError = esError,
         supportingText = {
-            if (esError) {
-                Text(mensajeError ?: "")
+            AnimatedVisibility(visible = esError && !mensajeError.isNullOrBlank()) {
+                Text(
+                    text = mensajeError ?: "",
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+                )
             }
         },
         visualTransformation = if (esPassword && !mostrarPassword) {

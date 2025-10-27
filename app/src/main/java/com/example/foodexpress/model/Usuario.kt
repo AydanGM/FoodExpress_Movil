@@ -1,8 +1,12 @@
 package com.example.foodexpress.model
 
-data class Usuario (
-    val id: Long = 0,
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "usuarios")
+data class Usuario(
+    @PrimaryKey val correo: String = "",
     val nombre: String = "",
-    val correo: String = "",
-    val password: String = "",
+    val password: String = ""
 )
+

@@ -1,5 +1,6 @@
 package com.example.foodexpress.view
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,9 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.foodexpress.view.componentes.AlertaMensaje
 import com.example.foodexpress.view.componentes.CampoTextoValidado
 import com.example.foodexpress.viewModel.AuthViewModel
 import com.example.foodexpress.viewModel.UsuarioViewModel
@@ -19,7 +18,7 @@ import com.example.foodexpress.viewModel.UsuarioViewModel
 @Composable
 fun PantallaRegistro(
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel(),
+    authViewModel: AuthViewModel,
     usuarioViewModel: UsuarioViewModel
 ) {
     val authState by authViewModel.authState.collectAsState()
@@ -80,20 +79,20 @@ fun PantallaRegistro(
                     esPassword = true
                 )
 
-                Button(
-                    onClick = {
-                        // Necesitaríamos pasar confirmPassword al ViewModel
-                        authViewModel.registrar()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !authState.isLoading
-                ) {
-                    if (authState.isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        Text("Registrarse")
+                AnimatedContent(targetState = authState.isLoading) { loading ->
+                    Button(
+                        onClick = { authViewModel.registrar() },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !loading
+                    ) {
+                        if (loading) {
+                            CircularProgressIndicator()
+                        } else {
+                            Text("Registrarse")
+                        }
                     }
                 }
+
 
                 TextButton(
                     onClick = { navController.navigate("login") }
@@ -104,26 +103,17 @@ fun PantallaRegistro(
         }
     }
 
-    // Navegación automática después de registro exitoso
-    LaunchedEffect(authState.mensaje) {
-        if (authState.mensaje.contains("éxito")) {
-            // Iniciar sesión automáticamente al registrarse
-            usuarioViewModel.iniciarSesion(authState.usuario.nombre, authState.usuario.correo)
+    LaunchedEffect(Unit) {
+        authViewModel.limpiarEstado()
+    }
 
+    LaunchedEffect(authState.isAuthenticated) {
+        if (authState.isAuthenticated) {
+            usuarioViewModel.iniciarSesion(authState.usuario.nombre, authState.usuario.correo)
             authViewModel.limpiarMensaje()
-            navController.navigate("inicio") {
+            navController.navigate("login") {
                 popUpTo("registro") { inclusive = true }
             }
         }
-    }
-
-    // Mostrar alerta solo para errores
-    if (authState.mensaje.isNotBlank() && !authState.mensaje.contains("éxito")) {
-        AlertaMensaje(
-            mensaje = authState.mensaje,
-            onConfirm = {
-                authViewModel.limpiarMensaje()
-            }
-        )
     }
 }

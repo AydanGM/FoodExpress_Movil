@@ -44,7 +44,7 @@ fun PantallaInicio() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Reseñas (si todavía quieres mantenerlas)
+        // Reseñas
         SeccionReviews()
     }
 }
