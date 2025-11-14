@@ -32,7 +32,7 @@ fun TopAppBarPersonalizada(
     onSearchSubmit: () -> Unit,
     onProfileClick: () -> Unit,
     onCartClick: () -> Unit,
-    onTitleClick: () -> Unit, // Nuevo parámetro
+    onTitleClick: () -> Unit,
     numeroDeItems: Int,
     usuarioConectado: Boolean
 ) {
@@ -40,7 +40,7 @@ fun TopAppBarPersonalizada(
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFFDC2626) // Rojo similar a tu React
+            containerColor = Color(0xFFDC2626)
         ),
         title = {
             OutlinedTextField(
@@ -73,12 +73,12 @@ fun TopAppBarPersonalizada(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .clickable { onTitleClick() } // Se hace clicleable
+                    .clickable { onTitleClick() }
             ) {
                 // Logo con fondo blanco circular
                 Box(
                     modifier = Modifier
-                        .size(40.dp) // Un poco más grande para el fondo
+                        .size(40.dp)
                         .clip(CircleShape)
                         .background(Color.White),
                     contentAlignment = Alignment.Center
@@ -86,7 +86,7 @@ fun TopAppBarPersonalizada(
                     Image(
                         painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Logo Food Express",
-                        modifier = Modifier.size(36.dp) // El logo en sí
+                        modifier = Modifier.size(36.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))

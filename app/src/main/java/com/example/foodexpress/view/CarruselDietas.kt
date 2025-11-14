@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodexpress.R
@@ -26,20 +28,20 @@ data class ItemDieta(
 @Composable
 fun CarruselDietas() {
     val itemsDieta = listOf(
-        ItemDieta("Comidas Tradicionales", "Investiga sobre restaurantes y comidas varias si no tienes una preferencia de dieta.", R.drawable.ic_launcher_background),
-        ItemDieta("Comidas Veganas", "¿Quieres alimentos de origen vegetal? Aquí tienes una variedad de opciones veganas.", R.drawable.ic_launcher_background),
-        ItemDieta("Comidas Vegetarianas", "Explora deliciosas opciones vegetarianas que satisfacen tu paladar.", R.drawable.ic_launcher_background),
-        ItemDieta("Comidas Pescetarianas", "Si eres pescetariano, aquí encontrarás platos que incluyen pescado y mariscos.", R.drawable.ic_launcher_background),
-        ItemDieta("Comidas Sin Gluten", "Descubre opciones sin gluten para una alimentación saludable y segura.", R.drawable.ic_launcher_background),
-        ItemDieta("Dieta Keto", "Explora platos bajos en carbohidratos y altos en grasas para una dieta cetogénica.", R.drawable.ic_launcher_background),
-        ItemDieta("Dieta Halal", "Encuentra comidas que cumplen con los requisitos de la dieta halal.", R.drawable.ic_launcher_background),
-        ItemDieta("Comidas Sin Lactosa", "Explora opciones de alimentos que son libres de lactosa.", R.drawable.ic_launcher_background)
+        ItemDieta("\uD83C\uDF54 Comidas Tradicionales", "Restaurantes y comidas varias si no tienes una preferencia de dieta.", R.drawable.hamburguesa_con_guacamole),
+        ItemDieta("\uD83E\uDD57 Comidas Veganas", "¿Buscas alimentos de origen vegetal? Explora opciones veganas", R.drawable.comida_vegana),
+        ItemDieta("\uD83E\uDD66 Comidas Vegetarianas", "Explora deliciosas opciones vegetarianas que satisfacen tu paladar.", R.drawable.comida_vegetariana),
+        ItemDieta("\uD83D\uDC1F Comidas Pescetarianas", "Si eres pescetariano, aquí encontrarás platos que incluyen pescado y mariscos.", R.drawable.comida_pescetariana),
+        ItemDieta("\uD83C\uDF3E Comidas Sin Gluten", "Descubre opciones sin gluten para una alimentación saludable y segura.", R.drawable.sin_gluten),
+        ItemDieta("\uD83E\uDD53 Dieta Keto", "“Platos bajos en carbohidratos y ricos en grasas para tu dieta keto.”", R.drawable.dieta_keto),
+        ItemDieta("\uD83D\uDD4C Dieta Halal", "Encuentra comidas que cumplen con los requisitos de la dieta halal.", R.drawable.comidas_halal),
+        ItemDieta("\uD83E\uDD5B Comidas Sin Lactosa", "Explora opciones de alimentos que son libres de lactosa.", R.drawable.comida_sin_lactosa)
     )
 
     Column {
         Text(
-            text = "Categorías de Dieta",
-            fontSize = 20.sp,
+            text = "\uD83D\uDE0B Categorías de Dieta",
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -79,14 +81,19 @@ fun TarjetaDieta(itemDieta: ItemDieta) {
             Text(
                 text = itemDieta.titulo,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                style = MaterialTheme.typography.bodySmall
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = itemDieta.descripcion,
-                fontSize = 12.sp
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                        .heightIn(min = 32.dp)
+                        .fillMaxWidth()
+
             )
         }
     }

@@ -3,6 +3,9 @@ package com.example.foodexpress.view
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +25,7 @@ fun PantallaInicio() {
     ) {
         // Encabezado
         Text(
-            text = "Bienvenido a Food Express",
+            text = "\uD83C\uDF55 Bienvenido a Food Express",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -31,6 +34,15 @@ fun PantallaInicio() {
             text = "Tu plataforma de entrega de comida rápida favorita.",
             style = MaterialTheme.typography.bodyLarge
         )
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            thickness = DividerDefaults.Thickness,
+            color = DividerDefaults.color
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Dietas "disponibles"
+        CarruselDietas()
 
         Spacer(modifier = Modifier.height(32.dp))
 

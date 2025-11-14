@@ -5,13 +5,13 @@ import com.example.foodexpress.model.AuthErrores
 object Validaciones {
 
     // Expresiones regulares
-    private val nombreRegex = Regex("^[a-zA-ZÀ-ÿ\\s]{10,40}$")
+    private val nombreRegex = Regex("^[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+(?: [A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)+$")
     private val correoRegex = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$", RegexOption.IGNORE_CASE)
     private val passwordRegex = Regex("^(?=.*[A-Z])(?=.*\\d).{8,}$")
 
     fun validarNombre(nombre: String): String? {
         return if (!nombreRegex.matches(nombre.trim())) {
-            "El nombre debe tener al menos 10 letras y solo puede contener caracteres alfabéticos."
+            "Por favor, ingresa tu nombre y apellido(s)"
         } else null
     }
 

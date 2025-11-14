@@ -43,7 +43,7 @@ fun SeccionCategorias() {
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Nuestras Categorías",
+            text = "\uD83D\uDCCB Nuestras Categorías",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -82,7 +82,7 @@ fun TarjetaCategoria(categoria: Categoria) {
                 text = categoria.nombre,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(8.dp)
             )

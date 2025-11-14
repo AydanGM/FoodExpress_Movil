@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "64419530018",
+    "project_id": "ayuda-13ded",
+    "storage_bucket": "ayuda-13ded.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64419530018:android:20a54abfeb22c801b1117b",
+        "android_client_info": {
+          "package_name": "com.example.foodexpress"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64419530018-spmj449kivlnr53ab0jq0cpb33qg84nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foodexpress",
+            "certificate_hash": "b5ba059acb5edc11e70ed1d8b26cddbde1e9bb43"
+          }
+        },
+        {
+          "client_id": "64419530018-eqnbne474va3otc1v8bnl1la3h8huv0e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxtN0VLSMoMPJEp7fj9CpyHDRIOdGT7sg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64419530018-eqnbne474va3otc1v8bnl1la3h8huv0e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

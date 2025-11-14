@@ -84,7 +84,7 @@ fun TarjetaPromocion(promocion: Promocion, modifier: Modifier = Modifier) {
                 Text(
                     text = promocion.titulo,
                     color = Color.White,
-                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -92,7 +92,7 @@ fun TarjetaPromocion(promocion: Promocion, modifier: Modifier = Modifier) {
                 Text(
                     text = promocion.descripcion,
                     color = Color.White,
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(16.dp))
