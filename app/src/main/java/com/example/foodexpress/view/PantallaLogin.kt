@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.foodexpress.view.componentes.AlertaMensaje
 import com.example.foodexpress.viewModel.AuthViewModel
-import com.example.foodexpress.viewModel.UsuarioViewModel
 import kotlinx.coroutines.delay
 import com.example.foodexpress.view.componentes.CampoTextoValidado
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -36,8 +35,7 @@ import com.google.android.gms.common.api.ApiException
 @Composable
 fun PantallaLogin(
     navController: NavController,
-    authViewModel: AuthViewModel,
-    usuarioViewModel: UsuarioViewModel
+    authViewModel: AuthViewModel
 ) {
     val authState by authViewModel.authState.collectAsState()
     val scrollState = rememberScrollState()
@@ -61,7 +59,6 @@ fun PantallaLogin(
             val account = task.getResult(ApiException::class.java)
             val nombre = account.displayName
             val correo = account.email
-            val token = account.idToken
 
             // Conexión a ViewModel
             authViewModel.loginConGoogle(nombre ?: "", correo ?: "")
@@ -70,7 +67,6 @@ fun PantallaLogin(
         }
     }
 
-
     LaunchedEffect(Unit) {
         authViewModel.limpiarEstado()
     }
@@ -78,7 +74,6 @@ fun PantallaLogin(
     LaunchedEffect(authState.isAuthenticated) {
         if (authState.isAuthenticated) {
             delay(1500)
-            usuarioViewModel.iniciarSesion(authState.usuario.nombre, authState.usuario.correo)
             authViewModel.limpiarMensaje()
             navController.navigate("inicio") {
                 popUpTo("login") { inclusive = true }
@@ -168,14 +163,12 @@ fun PantallaLogin(
             }
         }
 
-        AnimatedVisibility(visible = authState.errores.general != null) {
+        AnimatedVisibility(visible = authState.mensaje.isNotBlank()) {
             Text(
-                text = authState.errores.general ?: "",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+                text = authState.mensaje,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 textAlign = TextAlign.Center
             )
         }

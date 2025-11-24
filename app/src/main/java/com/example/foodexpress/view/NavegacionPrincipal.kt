@@ -14,7 +14,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.foodexpress.viewModel.AuthViewModel
 import com.example.foodexpress.viewModel.CarritoViewModel
-import com.example.foodexpress.viewModel.UsuarioViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 
@@ -25,8 +24,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 @Composable
 fun NavegacionPrincipal(
-    authViewModel: AuthViewModel,
-    usuarioViewModel: UsuarioViewModel
+    authViewModel: AuthViewModel
 ) {
     val navController = rememberNavController()
     var searchText by remember { mutableStateOf("") }
@@ -34,7 +32,7 @@ fun NavegacionPrincipal(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val carritoState by carritoViewModel.uiState.collectAsState()
-    val usuarioState by usuarioViewModel.uiState.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
 
     LaunchedEffect(carritoState.itemAgregado) {
         carritoState.itemAgregado?.let {
@@ -51,9 +49,6 @@ fun NavegacionPrincipal(
                 navController = navController,
                 searchText = searchText,
                 onSearchTextChange = { searchText = it },
-                onSearchSubmit = {
-                    navController.navigate("menu?search=$searchText")
-                },
                 onProfileClick = {
                     navController.navigate(DestinosNavegacion.Perfil.ruta)
                 },
@@ -69,7 +64,8 @@ fun NavegacionPrincipal(
                     }
                 },
                 numeroDeItems = carritoState.numeroDeItems,
-                usuarioConectado = usuarioState.usuarioActual != null
+                usuarioConectado = authState.isAuthenticated,
+                snackbarHostState = snackbarHostState
             )
         },
         bottomBar = {
@@ -153,7 +149,7 @@ fun NavegacionPrincipal(
                 }
             ) {
                 PantallaMenu(onAgregarClick = { comida ->
-                    if (usuarioState.usuarioActual != null) {
+                    if (authState.isAuthenticated) {
                         carritoViewModel.agregarAlCarrito(comida)
                     } else {
                         navController.navigate(DestinosNavegacion.Login.ruta)
@@ -224,7 +220,6 @@ fun NavegacionPrincipal(
             ) {
                 PantallaPerfil(
                     navController = navController,
-                    usuarioViewModel = usuarioViewModel,
                     authViewModel = authViewModel
                 )
             }
@@ -260,8 +255,7 @@ fun NavegacionPrincipal(
             ) {
                 PantallaLogin(
                     navController = navController,
-                    authViewModel = authViewModel,
-                    usuarioViewModel = usuarioViewModel
+                    authViewModel = authViewModel
                 )
             }
 
@@ -296,8 +290,7 @@ fun NavegacionPrincipal(
             ) {
                 PantallaRegistro(
                     navController = navController,
-                    authViewModel = authViewModel,
-                    usuarioViewModel = usuarioViewModel
+                    authViewModel = authViewModel
                 )
             }
 

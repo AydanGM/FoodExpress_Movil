@@ -1,24 +1,27 @@
 package com.example.foodexpress.repository
 
-import com.example.foodexpress.model.AppDatabase
 import com.example.foodexpress.model.Usuario
 
-class UsuarioRepository(private val db: AppDatabase) {
-    private val usuarioDao = db.usuarioDao()
+class UsuarioRepository(private val api: UsuarioApi) {
 
-    suspend fun insertarUsuario(usuario: Usuario) {
-        usuarioDao.insertar(usuario)
+    suspend fun registrarUsuario(usuario: Usuario): Usuario {
+        return api.registrarUsuario(usuario)
     }
 
-    suspend fun validarUsuario(correo: String, password: String): Usuario? {
-        return usuarioDao.validarUsuario(correo, password)
+    suspend fun login(correo: String, password: String): Usuario? {
+        val response = api.login(LoginRequest(correo, password))
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
     }
 
-    suspend fun obtenerUsuarioPorCorreo(correo: String): Usuario? {
-        return usuarioDao.obtenerUsuarioPorCorreo(correo)
+    suspend fun obtenerUsuario(correo: String): Usuario? {
+        return api.obtenerUsuario(correo)
     }
 
     suspend fun existeUsuario(correo: String): Boolean {
-        return usuarioDao.existeUsuario(correo) > 0
+        return api.existeUsuario(correo)
     }
 }

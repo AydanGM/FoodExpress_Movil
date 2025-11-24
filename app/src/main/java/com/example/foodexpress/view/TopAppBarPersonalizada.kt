@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodexpress.R
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,14 +30,15 @@ fun TopAppBarPersonalizada(
     navController: NavController,
     searchText: String,
     onSearchTextChange: (String) -> Unit,
-    onSearchSubmit: () -> Unit,
     onProfileClick: () -> Unit,
     onCartClick: () -> Unit,
     onTitleClick: () -> Unit,
     numeroDeItems: Int,
-    usuarioConectado: Boolean
+    usuarioConectado: Boolean,
+    snackbarHostState: SnackbarHostState
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -46,12 +48,33 @@ fun TopAppBarPersonalizada(
             OutlinedTextField(
                 value = searchText,
                 onValueChange = onSearchTextChange,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                 placeholder = { Text("Buscar...", color = Color.White.copy(alpha = 0.7f)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                        onSearchSubmit()
+                        when (searchText.lowercase()){
+                            "inicio" -> navController.navigate(DestinosNavegacion.Inicio.ruta)
+                            "menu" -> navController.navigate(DestinosNavegacion.Menu.ruta)
+                            "login" -> navController.navigate(DestinosNavegacion.Login.ruta)
+                            "registro" -> navController.navigate(DestinosNavegacion.Registro.ruta)
+                            "perfil" -> navController.navigate(DestinosNavegacion.Perfil.ruta)
+                            "carrito" -> navController.navigate(DestinosNavegacion.Carrito.ruta)
+                            "mapa" -> navController.navigate(DestinosNavegacion.Mapa.ruta)
+                            "restaurantes" -> navController.navigate(DestinosNavegacion.Restaurantes.ruta)
+
+                            else -> {
+                                navController.navigate(DestinosNavegacion.Inicio.ruta)
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "No se encontró el destino: $searchText",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                        }
+                        onSearchTextChange("")
                         focusManager.clearFocus()
                     }
                 ),
@@ -63,9 +86,9 @@ fun TopAppBarPersonalizada(
                     unfocusedBorderColor = Color.Transparent
                 ),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
+                    .height(56.dp)
                     .padding(end = 8.dp)
+                    .fillMaxWidth(0.9f)
             )
         },
         navigationIcon = {

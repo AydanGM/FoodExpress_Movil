@@ -17,7 +17,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -73,7 +72,7 @@ fun PantallaMapa() {
                 DividerDefaults.color)
         // Mostrar el mapa
         GoogleMap(
-            modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
             ubicacion?.let {

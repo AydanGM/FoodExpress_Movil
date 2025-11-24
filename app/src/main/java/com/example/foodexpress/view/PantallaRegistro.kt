@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.foodexpress.view.componentes.CampoTextoValidado
 import com.example.foodexpress.viewModel.AuthViewModel
-import com.example.foodexpress.viewModel.UsuarioViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -35,8 +34,7 @@ import com.example.foodexpress.R
 @Composable
 fun PantallaRegistro(
     navController: NavController,
-    authViewModel: AuthViewModel,
-    usuarioViewModel: UsuarioViewModel
+    authViewModel: AuthViewModel
 ) {
     val authState by authViewModel.authState.collectAsState()
     val scrollState = rememberScrollState()
@@ -84,7 +82,6 @@ fun PantallaRegistro(
     LaunchedEffect(authState.isAuthenticated) {
         if (authState.isAuthenticated && authState.isGoogleAuth) {
             delay(1500)
-            usuarioViewModel.iniciarSesion(authState.usuario.nombre, authState.usuario.correo)
             navController.navigate("inicio") {
                 popUpTo("registro") { inclusive = true }
             }
@@ -189,14 +186,12 @@ fun PantallaRegistro(
             }
         }
 
-        AnimatedVisibility(visible = authState.errores.general != null) {
+        AnimatedVisibility(visible = authState.mensaje.isNotBlank()) {
             Text(
-                text = authState.errores.general ?: "",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+                text = authState.mensaje,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 textAlign = TextAlign.Center
             )
         }

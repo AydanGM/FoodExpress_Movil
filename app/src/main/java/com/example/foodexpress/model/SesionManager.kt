@@ -3,12 +3,8 @@ package com.example.foodexpress.model
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.example.foodexpress.repository.UsuarioRepository
 
-class SesionManager(
-    context: Context,
-    private val usuarioRepository: UsuarioRepository
-) {
+class SesionManager(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE)
 
@@ -24,8 +20,7 @@ class SesionManager(
         prefs.edit { remove(KEY_CORREO) }
     }
 
-    suspend fun obtenerUsuarioSesion(): Usuario? {
-        val correo = prefs.getString(KEY_CORREO, null)
-        return correo?.let { usuarioRepository.obtenerUsuarioPorCorreo(it) }
+    fun obtenerCorreoSesion(): String? {
+        return prefs.getString(KEY_CORREO, null)
     }
 }
