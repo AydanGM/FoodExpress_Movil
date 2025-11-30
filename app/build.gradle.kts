@@ -20,9 +20,24 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val mapsApiKey = project.findProperty("MAPS_API_KEY") as String
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:/Users/aydan/OneDrive/Escritorio/KeyStore/upload-keystore.jks")   // path de keystore
+            storePassword = "Password123!"     // password
+            keyAlias = "FoodExpress"           // Alias de jks
+            keyPassword = "Password123!"         // password
+        }
     }
 
     buildTypes {
+        debug {
+            enableAndroidTestCoverage = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -40,6 +55,18 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE-notice.md",
+                "META-INF/NOTICE.md",
+                "META-INF/NOTICE.txt",
+                "META-INF/LICENSE.txt",
+                "META-INF/DEPENDENCIES"
+            )
+        }
     }
 }
 
@@ -83,10 +110,15 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
     // MockK
     testImplementation("io.mockk:mockk:1.13.10")
+    androidTestImplementation("io.mockk:mockk-android:1.13.10")
     // Coroutines Test
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     //ApplicationProvider en tests
     testImplementation("androidx.test:core:1.5.0")
+    // JUnit 5 API y Engine
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+
 }
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()

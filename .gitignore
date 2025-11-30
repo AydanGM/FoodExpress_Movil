@@ -1,15 +1,36 @@
+# === Android / Gradle ===
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
 local.properties
+
+# === Android Studio ===
+.idea/
+.DS_Store
+
+# === APKs y outputs ===
+*.apk
+*.aab
+app/release/
+output-metadata.json
+baselineProfiles/
+
+# === Keystore (no subir nunca a GitHub) ===
+*.jks
+*.keystore
+
+# === Logs ===
+*.log
+
+# === Backend Spring Boot / Maven ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# === Firebase ===
+google-services.json

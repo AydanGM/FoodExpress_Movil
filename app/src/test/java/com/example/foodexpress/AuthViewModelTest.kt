@@ -4,21 +4,39 @@ import com.example.foodexpress.model.Usuario
 import com.example.foodexpress.model.SesionManager
 import com.example.foodexpress.repository.UsuarioRepository
 import com.example.foodexpress.viewModel.AuthViewModel
-import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
+import io.mockk.coJustRun
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthViewModelTest : StringSpec({
+class AuthViewModelTest {
 
-    "login exitoso debe actualizar authState a autenticado" {
+    private val testDispatcher = StandardTestDispatcher()
+
+    @BeforeEach
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun loginExitosoDebeAutenticar() = runTest {
         val mockRepo = mockk<UsuarioRepository>()
         val fakeSesionManager = mockk<SesionManager>(relaxed = true)
 
-        // Simulamos que el repo devuelve un usuario válido
         coEvery { mockRepo.login("test@correo.com", "Abc12345") } returns Usuario(
             correo = "test@correo.com",
             nombre = "Test User",
@@ -27,49 +45,156 @@ class AuthViewModelTest : StringSpec({
 
         val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
 
-        runTest {
-            // Simulamos que el usuario escribe correo y contraseña
-            viewModel.onCorreoChange("test@correo.com")
-            viewModel.onPasswordChange("Abc12345")
+        viewModel.onCorreoChange("test@correo.com")
+        viewModel.onPasswordChange("Abc12345")
+        viewModel.login()
 
-            viewModel.login()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            // Verificamos que el estado cambió a autenticado
-            viewModel.authState.value.isAuthenticated shouldBe true
-        }
+        Assertions.assertTrue(viewModel.authState.value.isAuthenticated)
     }
 
-    "login fallido debe mantener authState en no autenticado" {
+    @Test
+    fun loginFallidoDebeMantenerNoAutenticado() = runTest {
         val mockRepo = mockk<UsuarioRepository>()
         val fakeSesionManager = mockk<SesionManager>(relaxed = true)
 
-        // Simulamos que el repo devuelve null (login incorrecto)
         coEvery { mockRepo.login("test@correo.com", "wrongpass") } returns null
 
         val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
 
-        runTest {
-            viewModel.onCorreoChange("test@correo.com")
-            viewModel.onPasswordChange("wrongpass")
+        viewModel.onCorreoChange("test@correo.com")
+        viewModel.onPasswordChange("wrongpass")
+        viewModel.login()
 
-            viewModel.login()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-            // Verificamos que sigue sin autenticarse
-            viewModel.authState.value.isAuthenticated shouldBe false
-            viewModel.authState.value.mensaje shouldBe "Correo o contraseña incorrectos."
-        }
+        Assertions.assertFalse(viewModel.authState.value.isAuthenticated)
+        Assertions.assertEquals("Correo o contraseña incorrectos.", viewModel.authState.value.mensaje)
     }
 
-    "logout debe limpiar la sesión y actualizar mensaje" {
+    @Test
+    fun logoutDebeLimpiarSesionYMostrarMensaje() = runTest {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        viewModel.logout()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        Assertions.assertFalse(viewModel.authState.value.isAuthenticated)
+        Assertions.assertTrue(viewModel.authState.value.mensaje.contains("Has cerrado sesión"))
+    }
+
+    @Test
+    fun registrarDebeMostrarMensajeExitoso() = runTest {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        coEvery { mockRepo.existeUsuario(any()) } returns false
+        coJustRun { mockRepo.registrarUsuario(any()) }
+
+        viewModel.onNombreChange("Test User")
+        viewModel.onCorreoChange("test@correo.com")
+        viewModel.onPasswordChange("Abc12345")
+        viewModel.onConfirmPasswordChange("Abc12345")
+
+        viewModel.registrar()
+        advanceUntilIdle()
+
+        Assertions.assertTrue(viewModel.authState.value.mensaje.contains("Registro exitoso"))
+    }
+
+    @Test
+    fun loginConGoogleDebeMostrarMensajeBienvenida() = runTest {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        coEvery { mockRepo.existeUsuario("google@correo.com") } returns false
+        coJustRun { mockRepo.registrarUsuario(any()) }
+
+        viewModel.loginConGoogle(nombre = "Google User", correo = "google@correo.com")
+        advanceUntilIdle()
+
+        Assertions.assertTrue(viewModel.authState.value.mensaje.contains("¡Bienvenido con Google"))
+        Assertions.assertTrue(viewModel.authState.value.isGoogleAuth)
+    }
+
+    @Test
+    fun actualizarErrorGeneralDebeSetearError() {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        viewModel.actualizarErrorGeneral("Error general")
+
+        Assertions.assertEquals("Error general", viewModel.authState.value.errores.general)
+    }
+
+    @Test
+    fun restaurarSesionDebeAutenticarUsuarioExistente() = runTest {
         val mockRepo = mockk<UsuarioRepository>()
         val fakeSesionManager = mockk<SesionManager>(relaxed = true)
 
+        // Simulamos que hay un correo guardado en sesión
+        every { fakeSesionManager.obtenerCorreoSesion() } returns "test@correo.com"
+
+        // Simulamos que el repositorio devuelve un usuario válido
+        coEvery { mockRepo.obtenerUsuario("test@correo.com") } returns Usuario(
+            correo = "test@correo.com",
+            nombre = "Test User",
+            password = "Abc12345"
+        )
+
         val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
 
-        runTest {
-            viewModel.logout()
-            viewModel.authState.value.isAuthenticated shouldBe false
-            viewModel.authState.value.mensaje shouldBe "Has cerrado sesión exitosamente."
-        }
+        viewModel.restaurarSesion()
+        advanceUntilIdle()
+
+        Assertions.assertTrue(viewModel.authState.value.isAuthenticated)
+        Assertions.assertEquals("test@correo.com", viewModel.authState.value.usuario?.correo)
     }
-})
+
+    @Test
+    fun restaurarSesionDebeMantenerNoAutenticadoSiNoHayUsuario() = runTest {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+
+        every { fakeSesionManager.obtenerCorreoSesion() } returns "test@correo.com"
+        coEvery { mockRepo.obtenerUsuario("test@correo.com") } returns null
+
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        viewModel.restaurarSesion()
+        advanceUntilIdle()
+
+        Assertions.assertFalse(viewModel.authState.value.isAuthenticated)
+    }
+
+    @Test
+    fun limpiarMensajeDebeVaciarElMensaje() {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        viewModel.actualizarErrorGeneral("Error general")
+        viewModel.limpiarMensaje()
+
+        Assertions.assertEquals("", viewModel.authState.value.mensaje)
+    }
+
+    @Test
+    fun limpiarEstadoDebeResetearAuthState() {
+        val mockRepo = mockk<UsuarioRepository>()
+        val fakeSesionManager = mockk<SesionManager>(relaxed = true)
+        val viewModel = AuthViewModel(mockRepo, fakeSesionManager)
+
+        viewModel.onCorreoChange("test@correo.com")
+        viewModel.limpiarEstado()
+
+        Assertions.assertFalse(viewModel.authState.value.isAuthenticated)
+        Assertions.assertEquals("", viewModel.authState.value.usuario.correo)
+    }
+}

@@ -2,32 +2,45 @@ package com.example.foodexpress
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.foodexpress.model.SesionManager
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+// JUnit 4
 class SesionManagerTest {
 
-    @Test
-    fun guardarSesion_debeAlmacenarCorreo() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        val sesionManager = SesionManager(context)
+    private lateinit var sesionManager: SesionManager
+    private lateinit var context: Context
 
-        sesionManager.guardarSesion("test@correo.com")
-        assertEquals("test@correo.com", sesionManager.obtenerCorreoSesion())
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+        sesionManager = SesionManager(context)
+        sesionManager.cerrarSesion() // limpiamos antes de cada test
     }
 
     @Test
-    fun cerrarSesion_debeEliminarCorreo() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        val sesionManager = SesionManager(context)
-
+    fun guardarSesionDebeAlmacenarCorreo() {
         sesionManager.guardarSesion("test@correo.com")
-        sesionManager.cerrarSesion()
 
-        assertNull(sesionManager.obtenerCorreoSesion())
+        val correoGuardado = sesionManager.obtenerCorreoSesion()
+        assertNotNull(correoGuardado)
+        assertEquals("test@correo.com", correoGuardado)
+    }
+
+    @Test
+    fun cerrarSesionDebeEliminarCorreo() {
+        sesionManager.guardarSesion("test@correo.com")
+
+        sesionManager.cerrarSesion()
+        val correoGuardado = sesionManager.obtenerCorreoSesion()
+        assertNull(correoGuardado)
+    }
+
+    @Test
+    fun obtenerCorreoSesionSinSesionDebeRetornarNull() {
+        val correoGuardado = sesionManager.obtenerCorreoSesion()
+        assertNull(correoGuardado)
     }
 }
