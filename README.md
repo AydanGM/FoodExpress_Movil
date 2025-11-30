@@ -27,7 +27,7 @@
 ## Instrucciones para ejecutar el proyecto
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/usuario/foodexpress.git
+   git clone https://github.com/AydanGM/FoodExpress_Movil.git
    ```
 2. Abrir el proyecto en Android Studio.
 3. Configurar el backend Spring Boot:
