@@ -48,4 +48,3 @@
 
 ## Evidencia de trabajo colaborativo
 - Link al tablero de Trello: [Trello Board](https://trello.com/b/k3MHOemZ/foodexpressmovil)
-```
